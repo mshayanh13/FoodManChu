@@ -32,10 +32,10 @@ class IngredientDetailVC: UIViewController {
         super.viewDidDisappear(animated)
     }
     
-    func checkDuplicateName(_ name: String) -> Bool {
+    func checkDuplicateName(_ name: String, exclude: String = "") -> Bool {
         if let ingredients = Utilities.shared.ingredientController.fetchedObjects {
             for ingredient in ingredients {
-                if let ingredientName = ingredient.name?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines), ingredientName == name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) {
+                if let ingredientName = ingredient.name?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines), ingredientName.equalsToWhileIgnoringCaseAndWhitespace(name), !ingredientName.equalsToWhileIgnoringCaseAndWhitespace(exclude) {
                     return true
                 }
             }
@@ -69,6 +69,13 @@ extension IngredientDetailVC {
         
         var ingredient: Ingredient!
         if ingredientToEdit != nil {
+            
+            if checkDuplicateName(ingredientName, exclude: ingredientToEdit!.name ?? "") {
+                showTemporaryError(with: "Recipe with this name already exits. Please enter a new name.", for: 2)
+                nameTextField.text = ingredientToEdit!.name
+                return
+            }
+            
             ingredient = ingredientToEdit
         } else {
             if checkDuplicateName(ingredientName) {

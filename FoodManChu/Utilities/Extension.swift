@@ -8,6 +8,12 @@
 
 import UIKit
 
+extension String {
+    func equalsToWhileIgnoringCaseAndWhitespace(_ string: String) -> Bool {
+        return self.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) == string.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
+    }
+}
+
 extension UIViewController {
     func showTemporaryError(with title: String, for seconds: Double) {
         let alert = UIAlertController(title: "", message: title, preferredStyle: .alert)

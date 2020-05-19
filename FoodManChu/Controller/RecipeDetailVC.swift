@@ -66,10 +66,10 @@ class RecipeDetailVC: UIViewController {
         
     }
 
-    func checkDuplicateName(_ name: String) -> Bool {
+    func checkDuplicateName(_ name: String, exclude: String = "") -> Bool {
         if let recipes = Utilities.shared.recipeController.fetchedObjects {
             for recipe in recipes {
-                if let recipeName = recipe.name?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines), recipeName == name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) {
+                if let recipeName = recipe.name?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines), recipeName.equalsToWhileIgnoringCaseAndWhitespace(name), !recipeName.equalsToWhileIgnoringCaseAndWhitespace(exclude) {
                     return true
                 }
             }
@@ -102,6 +102,12 @@ extension RecipeDetailVC {
         
         var recipe: Recipe!
         if recipeToEdit != nil {
+            if checkDuplicateName(recipeName, exclude: recipeToEdit!.name ?? "") {
+                showTemporaryError(with: "Recipe with this name already exits. Please enter a new name.", for: 2)
+                recipeNameTextField.text = recipeToEdit!.name
+                return
+            }
+            
             recipe = recipeToEdit
         } else {
             if checkDuplicateName(recipeName) {

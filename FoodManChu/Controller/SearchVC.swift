@@ -16,6 +16,8 @@ class SearchVC: UIViewController {
     @IBOutlet weak var searchButton: UIButton!
     @IBOutlet weak var searchBar: UISearchBar!
     
+    var shouldReset = true
+    
     let options = ["Ingredient",
                    "Recipe Name",
                    "Recipe Description",
@@ -52,12 +54,19 @@ class SearchVC: UIViewController {
         
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(true)
+        shouldReset = true
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
-        searchBar.text = ""
-        results = []
-        optionSelected = nil
-        searchTableView.reloadData()
-        resultsTableView.reloadData()
+        if shouldReset {
+            searchBar.text = ""
+            results = []
+            optionSelected = nil
+            searchTableView.reloadData()
+            resultsTableView.reloadData()
+        }
         super.viewWillDisappear(animated)
     }
     
@@ -199,6 +208,7 @@ extension SearchVC: UITableViewDataSource, UITableViewDelegate {
         } else {
             tableView.deselectRow(at: indexPath, animated: true)
             let recipe = results[indexPath.row]
+            shouldReset = false
             performSegue(withIdentifier: Utilities.shared.segue_view_recipe, sender: recipe)
         }
     }
