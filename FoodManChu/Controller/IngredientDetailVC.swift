@@ -31,6 +31,18 @@ class IngredientDetailVC: UIViewController {
         nameTextField.text = ""
         super.viewDidDisappear(animated)
     }
+    
+    func checkDuplicateName(_ name: String) -> Bool {
+        if let ingredients = Utilities.shared.ingredientController.fetchedObjects {
+            for ingredient in ingredients {
+                if let ingredientName = ingredient.name?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines), ingredientName == name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) {
+                    return true
+                }
+            }
+        }
+        
+        return false
+    }
 
 }
 
@@ -42,21 +54,27 @@ extension IngredientDetailVC {
     @IBAction func deleteButtonTapped(_ sender: UIButton) {
         
         if ingredientToEdit != nil {
-            Utilities.shared.context.delete(ingredientToEdit!)
-            Utilities.shared.ad.saveContext()
-            navigationController?.popViewController(animated: true)
+            confirmDelete {
+                Utilities.shared.context.delete(self.ingredientToEdit!)
+                Utilities.shared.ad.saveContext()
+                self.navigationController?.popViewController(animated: true)
+            }
         } else {
             nameTextField.text = ""
         }
     }
     
     @IBAction func saveButtonTapped(_ sender: UIButton) {
-        guard let ingredientName = nameTextField.text, ingredientName != "" else { return }
+        guard let ingredientName = nameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).capitalized, ingredientName != "" else { return }
         
         var ingredient: Ingredient!
         if ingredientToEdit != nil {
             ingredient = ingredientToEdit
         } else {
+            if checkDuplicateName(ingredientName) {
+                showTemporaryError(with: "Ingredient with this name already exits. Please enter a new name.", for: 2)
+                return
+            }
             ingredient = Ingredient(context: Utilities.shared.context)
         }
         
@@ -74,10 +92,10 @@ extension IngredientDetailVC {
             nameTextField.text = ingredient.name
             if ingredient.createdBySystem {
                 nameTextField.isEnabled = false
-                deleteButton.isEnabled = false
+                deleteButton.isHidden = true
             } else {
                 nameTextField.isEnabled = true
-                deleteButton.isEnabled = true
+                deleteButton.isHidden = false
             }
         }
     }

@@ -66,16 +66,6 @@ class SearchVC: UIViewController {
             destination.recipeToView = recipe
         }
     }
-
-    func showNothingFoundAlert() {
-        let alert = UIAlertController(title: "", message: "No results found.", preferredStyle: .alert)
-        self.present(alert, animated: true)
-        
-        let secondsToDismissAlert = DispatchTime.now() + 0.7
-        DispatchQueue.main.asyncAfter(deadline: secondsToDismissAlert, execute: {
-            alert.dismiss(animated: true)
-            })
-    }
     
     func setupBorders() {
         resultsTableView.layer.borderColor = UIColor.darkGray.cgColor
@@ -155,12 +145,12 @@ extension SearchVC: UISearchBarDelegate {
             }
             
             if results.count == 0 {
-                showNothingFoundAlert()
+                showTemporaryError(with: "No results found.", for: 0.7)
             }
             
             resultsTableView.reloadData()
         } catch let error {
-            debugPrint(error.localizedDescription)
+            showError(error.localizedDescription)
         }
     }
 }

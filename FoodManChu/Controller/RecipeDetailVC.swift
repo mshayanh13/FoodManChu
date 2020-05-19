@@ -59,33 +59,23 @@ class RecipeDetailVC: UIViewController {
         prepTimeTextField.text = ""
         descriptionTextView.text = ""
         cookingInstructionsTextView.text = ""
-        categorySelected = Utilities.shared.categories?[0]
+        categorySelected = Utilities.shared.categoryController.fetchedObjects?[0]
         categoryPickerView.selectRow(0, inComponent: 0, animated: true)
-        categoryLabel.text = Utilities.shared.categories?[categoryPickerView.selectedRow(inComponent: 0)].type?.capitalized
+        categoryLabel.text = Utilities.shared.categoryController.fetchedObjects?[categoryPickerView.selectedRow(inComponent: 0)].type?.capitalized
         ingredientsSelected.removeAll()
         
     }
 
     func checkDuplicateName(_ name: String) -> Bool {
-        if let recipes = Utilities.shared.recipes {
+        if let recipes = Utilities.shared.recipeController.fetchedObjects {
             for recipe in recipes {
-                if let recipeName = recipe.name, recipeName == name {
+                if let recipeName = recipe.name?.lowercased().trimmingCharacters(in: .whitespacesAndNewlines), recipeName == name.lowercased().trimmingCharacters(in: .whitespacesAndNewlines) {
                     return true
                 }
             }
         }
         
         return false
-    }
-    
-    func showDuplicateAlert() {
-        let alert = UIAlertController(title: "", message: "Recipe with this name already exits. Please enter a new name.", preferredStyle: .alert)
-        self.present(alert, animated: true)
-        
-        let secondsToDismissAlert = DispatchTime.now() + 2
-        DispatchQueue.main.asyncAfter(deadline: secondsToDismissAlert, execute: {
-            alert.dismiss(animated: true)
-            })
     }
     
 }
@@ -97,24 +87,28 @@ extension RecipeDetailVC {
     
     @IBAction func deleteButtonTapped(_ sender: UIButton) {
         if recipeToEdit != nil {
-            Utilities.shared.context.delete(recipeToEdit!)
-            Utilities.shared.ad.saveContext()
-            navigationController?.popViewController(animated: true)
+            confirmDelete {
+                Utilities.shared.context.delete(self.recipeToEdit!)
+                Utilities.shared.ad.saveContext()
+                self.navigationController?.popViewController(animated: true)
+            }
         } else {
             reset()
         }
     }
     
     @IBAction func saveButtonTapped(_ sender: UIButton) {
-        guard let recipeName = recipeNameTextField.text, recipeName != "" else { return }
-        if checkDuplicateName(recipeName) {
-            showDuplicateAlert()
-            return
-        }
+        guard let recipeName = recipeNameTextField.text?.trimmingCharacters(in: .whitespacesAndNewlines).capitalized, recipeName != "" else { return }
+        
         var recipe: Recipe!
         if recipeToEdit != nil {
             recipe = recipeToEdit
         } else {
+            if checkDuplicateName(recipeName) {
+                showTemporaryError(with: "Recipe with this name already exits. Please enter a new name.", for: 2)
+                return
+            }
+            
             recipe = Recipe(context: Utilities.shared.context)
         }
         
@@ -150,17 +144,17 @@ extension RecipeDetailVC {
             cookingInstructionsTextView.text = recipe.instructions
             categorySelected = recipe.category
             if let categorySelected = categorySelected {
-                let row = Utilities.shared.categories?.firstIndex(of: categorySelected)
+                let row = Utilities.shared.categoryController.fetchedObjects?.firstIndex(of: categorySelected)
                 categoryPickerView.selectRow(row!, inComponent: 0, animated: true)
                 categoryLabel.text = categorySelected.type?.capitalized
             }
             if let recipeIngredients = recipe.ingredients as? Set<Ingredient> {
                 ingredientsSelected = recipeIngredients
             }
-            duplicateButton.isEnabled = true
+            duplicateButton.isHidden = false
         } else {
             reset()
-            duplicateButton.isEnabled = false
+            duplicateButton.isHidden = true
         }
     }
 }
@@ -218,7 +212,7 @@ extension RecipeDetailVC: UIPickerViewDelegate, UIPickerViewDataSource {
     }
     
     func pickerView(_ pickerView: UIPickerView, numberOfRowsInComponent component: Int) -> Int {
-        if let categories = Utilities.shared.categories {
+        if let categories = Utilities.shared.categoryController.fetchedObjects {
             return categories.count
         } else {
             return 0
@@ -226,11 +220,11 @@ extension RecipeDetailVC: UIPickerViewDelegate, UIPickerViewDataSource {
     }
     
     func pickerView(_ pickerView: UIPickerView, titleForRow row: Int, forComponent component: Int) -> String? {
-        return Utilities.shared.categories?[row].type?.capitalized
+        return Utilities.shared.categoryController.fetchedObjects?[row].type?.capitalized
     }
     
     func pickerView(_ pickerView: UIPickerView, didSelectRow row: Int, inComponent component: Int) {
-        if let categories = Utilities.shared.categories {
+        if let categories = Utilities.shared.categoryController.fetchedObjects {
             let category = categories[row]
             categorySelected = category
             let type = category.type!

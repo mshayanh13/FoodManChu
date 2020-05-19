@@ -26,13 +26,10 @@ class Utilities {
     let segue_view_recipe: String = "ViewRecipeSegue"
     
     var ingredientController: NSFetchedResultsController<Ingredient>!
-    var ingredients: [Ingredient]?
     
     var categoryController: NSFetchedResultsController<Category>!
-    var categories: [Category]?
     
     var recipeController: NSFetchedResultsController<Recipe>!
-    var recipes: [Recipe]?
     
     init() {
         materialKey = false
@@ -82,7 +79,6 @@ extension Utilities {
         
         do {
             try controller.performFetch()
-            ingredients = controller.fetchedObjects
         } catch let error {
             debugPrint(error.localizedDescription)
         }
@@ -118,7 +114,6 @@ extension Utilities {
         
         do {
             try controller.performFetch()
-            categories = controller.fetchedObjects
         } catch let error {
             debugPrint(error.localizedDescription)
         }
@@ -138,7 +133,6 @@ extension Utilities {
         
         do {
             try controller.performFetch()
-            recipes = controller.fetchedObjects
         } catch let error {
             debugPrint(error.localizedDescription)
         }

@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		10274A8B24721724009E5412 /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10274A8A24721724009E5412 /* Extension.swift */; };
 		10703B5624639EFD006DDA09 /* SearchCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10703B5524639EFD006DDA09 /* SearchCell.swift */; };
 		10703B5824639F20006DDA09 /* ResultCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10703B5724639F20006DDA09 /* ResultCell.swift */; };
 		10703B5A24639F99006DDA09 /* SearchVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 10703B5924639F99006DDA09 /* SearchVC.swift */; };
@@ -34,6 +35,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		10274A8A24721724009E5412 /* Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		10703B5524639EFD006DDA09 /* SearchCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCell.swift; sourceTree = "<group>"; };
 		10703B5724639F20006DDA09 /* ResultCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultCell.swift; sourceTree = "<group>"; };
 		10703B5924639F99006DDA09 /* SearchVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchVC.swift; sourceTree = "<group>"; };
@@ -149,6 +151,7 @@
 			isa = PBXGroup;
 			children = (
 				10D6BF772462438F00BA0EF8 /* Utilities.swift */,
+				10274A8A24721724009E5412 /* Extension.swift */,
 			);
 			path = Utilities;
 			sourceTree = "<group>";
@@ -239,6 +242,7 @@
 				10D6BF4F2461911800BA0EF8 /* SceneDelegate.swift in Sources */,
 				10D6BF7A246247F000BA0EF8 /* IngredientCell.swift in Sources */,
 				10703B8224661A3F006DDA09 /* Custom.swift in Sources */,
+				10274A8B24721724009E5412 /* Extension.swift in Sources */,
 				10D6BF7124623A7200BA0EF8 /* Category+CoreDataProperties.swift in Sources */,
 				10D6BF7024623A7200BA0EF8 /* Category+CoreDataClass.swift in Sources */,
 				10703B5824639F20006DDA09 /* ResultCell.swift in Sources */,

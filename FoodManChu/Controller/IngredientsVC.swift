@@ -76,6 +76,7 @@ extension IngredientsVC: NSFetchedResultsControllerDelegate {
     }
     
     func controller(_ controller: NSFetchedResultsController<NSFetchRequestResult>, didChange anObject: Any, at indexPath: IndexPath?, for type: NSFetchedResultsChangeType, newIndexPath: IndexPath?) {
+        
         switch type {
         case .insert:
             if let indexPath = newIndexPath {
@@ -83,17 +84,18 @@ extension IngredientsVC: NSFetchedResultsControllerDelegate {
             }
         case .delete:
             if let indexPath = indexPath {
-            ingredientsTableView.deleteRows(at: [indexPath], with: .fade)
+                ingredientsTableView.deleteRows(at: [indexPath], with: .fade)
             }
         case .update:
             if let indexPath = indexPath {
-                let cell = ingredientsTableView.cellForRow(at: indexPath) as! IngredientCell
-                configureCell(cell, indexPath: indexPath)
+                if let cell = ingredientsTableView.cellForRow(at: indexPath) as? IngredientCell {
+                    configureCell(cell, indexPath: indexPath)
                 }
+            }
         case .move:
             if let oldIndexPath = indexPath, let newIndexPath = newIndexPath {
-            ingredientsTableView.deleteRows(at: [oldIndexPath], with: .fade)
-            ingredientsTableView.insertRows(at: [newIndexPath], with: .fade)
+                ingredientsTableView.deleteRows(at: [oldIndexPath], with: .fade)
+                ingredientsTableView.insertRows(at: [newIndexPath], with: .fade)
             }
         @unknown default:
             break

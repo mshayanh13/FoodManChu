@@ -80,17 +80,18 @@ extension RecipesVC: NSFetchedResultsControllerDelegate {
             }
         case .delete:
             if let indexPath = indexPath {
-            recipesTableView.deleteRows(at: [indexPath], with: .fade)
+                recipesTableView.deleteRows(at: [indexPath], with: .fade)
             }
         case .update:
             if let indexPath = indexPath {
-                let cell = recipesTableView.cellForRow(at: indexPath) as! RecipeCell
-                configureCell(cell, indexPath: indexPath)
+                if let cell = recipesTableView.cellForRow(at: indexPath) as? RecipeCell {
+                    configureCell(cell, indexPath: indexPath)
                 }
+            }
         case .move:
             if let oldIndexPath = indexPath, let newIndexPath = newIndexPath {
-            recipesTableView.deleteRows(at: [oldIndexPath], with: .fade)
-            recipesTableView.insertRows(at: [newIndexPath], with: .fade)
+                recipesTableView.deleteRows(at: [oldIndexPath], with: .fade)
+                recipesTableView.insertRows(at: [newIndexPath], with: .fade)
             }
         @unknown default:
             break
